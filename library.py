@@ -1,20 +1,28 @@
 from sys import argv
 from util.options import Option, Options
+from util.database import Database
 
-def help():
+def show_help():
     print("Help!")
-def list():
-    raise NotImplementedError()
+
+def show_version():
+    print("library.py version 0.1")
+
+def list_all_books():
+    books = Database.get_all_books()
+    print(books)
 
 ALL_POSSIBLE_OPTIONS = [
-        Option("h", "help", help)
+        Option("h", "help", show_help),
+        Option("v", "version", show_version),
+        Option("l", "list", list_all_books)
     ]
 
 # SHORT_OPTIONS = "hvla:runf:"
 # LONG_OPTIONS = [
 #         "help",
 #         "version",
-#         "list",
+#         "list-all",
 #         "author=",
 #         "read-only",
 #         "unread-only",
