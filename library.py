@@ -1,19 +1,23 @@
 from sys import argv
-from sub.options import Option, Options
+from sub.options import Option, Options, IncorrectUsageError
 from sub.database import Database
 from sub.book import Book
 
 ALL_POSSIBLE_OPTIONS = None
 
-HELP_MESSAGE = lambda: """
-Usage: library [OPTIONS...]
+HELP_MESSAGE = lambda: """Usage: library.py [OPTIONS...]
 
 Catalogue books and record the number of times they've been read
 
-""" + '\n'.join([option.to_string() for option in ALL_POSSIBLE_OPTIONS])
+""" + '\n'.join([option.to_string() for option in ALL_POSSIBLE_OPTIONS]) + """
+\nPlease report bugs to <https://github.com/ethanley/library/issues>"""
 
 def show_help():
     print(HELP_MESSAGE())
+
+def show_incorrect_usage():
+    print("Incorrect usage")
+    show_help()
 
 def show_version():
     print("library.py version 0.1")
@@ -75,12 +79,17 @@ ALL_POSSIBLE_OPTIONS = [
     ]
 
 def main():
-    chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)
-
-    if (chosen_option.has_parameter()):
-        chosen_option.action(parameter)
+    try:
+        chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)
+    except IncorrectUsageError:
+        show_incorrect_usage()
+    except:
+        print("Something went wrong. Aborting.")
     else:
-        chosen_option.action()
+        if (chosen_option.has_parameter()):
+            chosen_option.action(parameter)
+        else:
+            chosen_option.action()
 
 if __name__ == "__main__":
     main()

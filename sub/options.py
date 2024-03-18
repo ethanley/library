@@ -1,6 +1,6 @@
 import getopt
 
-class TooManyArgsError(Exception):
+class IncorrectUsageError(Exception):
     pass
 
 class Option:
@@ -36,18 +36,13 @@ class Options:
         # TODO error handling
 
     def get_option(self, argv):
-        try:
-            args, rest = getopt.getopt(
-                argv[1:],
-                self.__shorts,
-                self.__longs
-            )
+        args, rest = getopt.getopt(
+            argv[1:],
+            self.__shorts,
+            self.__longs
+        )
 
-            if (len(args) != 1):
-                raise TooManyArgsError()
-            
-            return self.__find_option(args[0][0]), args[0][1]
-        except TooManyArgsError:
-            print("Too many Args")
-        except getopt.error as err:
-            print(str(err))
+        if (len(args) != 1):
+            raise IncorrectUsageError()
+        
+        return self.__find_option(args[0][0]), args[0][1]
