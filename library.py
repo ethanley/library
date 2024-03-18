@@ -1,4 +1,4 @@
-from sys import argv
+from sys import argv, modules
 from sub.options import Option, Options, IncorrectUsageError
 from sub.database import Database
 from sub.book import Book
@@ -99,6 +99,8 @@ ALL_POSSIBLE_OPTIONS = [
 
 # TODO add menu system for when no command line arguments supplied
 def main():
+    if("idlelib" in modules): argv.extend(input(">>> ").split())
+
     try:
         chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)
     except IncorrectUsageError:
