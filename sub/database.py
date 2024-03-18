@@ -1,6 +1,7 @@
 import os.path
 from sub.book import Book
 
+# TODO improve error handling around file I/O
 class Database:
     __FILE_NAME = "./database/books.csv"
 

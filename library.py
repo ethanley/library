@@ -40,7 +40,8 @@ def list_by_read_status(has_been_read):
     filtered_books = Book.filter_by_read(all_books, has_been_read)
     print_books(filtered_books)
 
-def print_book(title):
+# TODO improve searching for a book, to permit inexact title matches
+def print_book_info(title):
     all_books = Database.get_all_books()
     book = Book.get_book_with_title(all_books, title)
     if (book == None):
@@ -48,10 +49,12 @@ def print_book(title):
         return
     print(book.to_string())
 
+# TODO improve book input UX 
 def add_new_book():
     title = input("Title:\t\t")
     author = input("Author:\t\t")
     times_read = input("Times Read:\t")
+    # TODO notify user if error reading times_read
     times_read = int(times_read) if times_read.isdigit() else None
 
     book = Book(title, author, int(times_read))
@@ -64,8 +67,15 @@ def mark_as_finished(title):
         print(f"No book found matching title: `{title}`")
         return
     book.mark_as_read()
+    
+    if (book.times_read == 1):
+        print("This is the first time you've finished this book - congratulations!")
+    else:
+        print(f"You've read this book before - {book.times_read} times now!")
+
     Database.update_book(book)
 
+# TODO add confirmation before deleting
 def delete_book(title):
     all_books = Database.get_all_books()
     book = Book.get_book_with_title(all_books, title)
@@ -79,7 +89,7 @@ ALL_POSSIBLE_OPTIONS = [
         Option("v", "version", show_version, "Show program version"),
         Option("l", "list", list_all_books, "List all books"),
         Option("a", "with-author", list_books_with_author, "List all books with author", "AUTHOR"),
-        Option("i", "info", print_book, "Display information about a book", "TITLE"),
+        Option("i", "info", print_book_info, "Display information about a book", "TITLE"),
         Option("n", "new", add_new_book, "Add a new book"),
         Option("r", "read-only", lambda: list_by_read_status(True), "List all read books"),
         Option("u", "unread_only", lambda: list_by_read_status(False), "List all unread books"),
@@ -87,6 +97,7 @@ ALL_POSSIBLE_OPTIONS = [
         Option("d", "delete", delete_book, "Delete a book", "TITLE")
     ]
 
+# TODO add menu system for when no command line arguments supplied
 def main():
     try:
         chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)

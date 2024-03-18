@@ -21,7 +21,12 @@ class Option:
         return f"{self.long}=" if self.has_parameter() else self.long
 
     def to_string(self):
-        return "\t%s  %s %s\n\t\t%s" % (f"-{self.short}", f"--{self.long}", f"[{self.parameter.upper()}]" if self.has_parameter() else "", self.help_message)
+        return "\t%s  %s %s\n\t\t%s" % (
+                f"-{self.short}",
+                f"--{self.long}",
+                f"[{self.parameter.upper()}]" if self.has_parameter() else "",
+                self.help_message
+            )
 
 class Options:
     def __init__(self, options):
@@ -37,17 +42,18 @@ class Options:
 
     def get_option(self, argv):
         try:
-            args, rest = getopt.getopt(
+            args, _ = getopt.getopt(
                 argv[1:],
                 self.__shorts,
                 self.__longs
             )
-        except getopt.error as err:
+        except getopt.error:
             raise IncorrectUsageError
 
         if (len(args) != 1):
             raise IncorrectUsageError()
 
+        # TODO seems handled by getopt.error - check may be redundant
         chosen_option = self.__find_option(args[0][0])
         if (chosen_option.has_parameter() and len(args[0]) == 1):
             raise IncorrectUsageError()
