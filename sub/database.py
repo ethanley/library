@@ -1,5 +1,5 @@
 import os.path
-from model.book import Book
+from sub.book import Book
 
 class Database:
     __FILE_NAME = "./database/books.csv"
@@ -28,10 +28,6 @@ class Database:
         rows = data.split('\n')
         table = [row.split(',') for row in rows if row != '']
 
-        books = [
-                Book(
-                    title, author, int(times_read)
-                ) for title, author, times_read in table
-            ]
+        books = [Book(*row) for row in table]
 
         return books
