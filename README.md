@@ -3,6 +3,8 @@ Catalogue books and record the number of times they've been read.
 
 This is a quick project, built as teaching material whilst demonstrating some cool Python stuff.
 
+There remain some TODOs, but given the context I'd like this project to keep them unresolved for now, as talking points.
+
 ## Setup
 ```sh
 $ python setup.py
