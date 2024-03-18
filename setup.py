@@ -11,9 +11,7 @@ default_books = [
 ]
 
 def __main__():
-    Database.initialise()
-    for book in default_books:
-        Database.add_book(book)
+    Database.initialise(default_books)
 
 if (__name__ == "__main__"):
     __main__()

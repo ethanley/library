@@ -15,13 +15,10 @@ class Database:
 
     @classmethod
     def initialise(cls, books = []):
-        if (len(books) == 0):
-            open(cls.__FILE_NAME, "x")
-        else:
-            with open(cls.__FILE_NAME, "w") as file:
-                for book in books:
-                    table_row = book.map_to_table_row()
-                    file.write(table_row)
+        with open(cls.__FILE_NAME, "w") as file:
+            for book in books:
+                table_row = book.map_to_table_row() + "\n"
+                file.write(table_row)
 
     @classmethod
     def get_all_books(cls):

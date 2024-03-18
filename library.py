@@ -10,30 +10,31 @@ def show_version():
     print("library.py version 0.1")
 
 def print_books(books):
-	formatted_titles = '\n'.join([book.title for book in books])
-	print(formatted_titles)
+    formatted_titles = '\n'.join([book.title for book in books])
+    print(formatted_titles)
 
 def list_all_books():
     books = Database.get_all_books()
     print_books(books)
 
 def list_books_with_author(author):
-	all_books = Database.get_all_books()
-	books_by_author = Book.filter_by_author(all_books, author)
-	print_books(books_by_author)
+    all_books = Database.get_all_books()
+    books_by_author = Book.filter_by_author(all_books, author)
+    print_books(books_by_author)
 
 def list_by_read_status(has_been_read):
-	all_books = Database.get_all_books()
-	filtered_books = Book.filter_by_read(all_books, has_been_read)
-	print_books(filtered_books)
+    all_books = Database.get_all_books()
+    filtered_books = Book.filter_by_read(all_books, has_been_read)
+    print_books(filtered_books)
 
 def add_new_book():
-	title = input("Title:\t")
-	author = input("Author:\t")
-	times_read = int(input("Times Read:\t"))
+    title = input("Title:\t\t")
+    author = input("Author:\t\t")
+    times_read = input("Times Read:\t")
+    times_read = int(times_read) if times_read.isdigit() else None
 
-	book = Book(title, author, times_read)
-	Database.add_book(book)
+    book = Book(title, author, int(times_read))
+    Database.add_book(book)
 
 def mark_as_finished(title):
     all_books = Database.get_all_books()
@@ -56,12 +57,12 @@ ALL_POSSIBLE_OPTIONS = [
         Option("h", "help", show_help),
         Option("v", "version", show_version),
         Option("l", "list", list_all_books),
-		Option("a", "with-author", list_books_with_author, True),
-		Option("n", "new", add_new_book),
-		Option("r", "read-only", lambda: list_by_read_status(True)),
-		Option("u", "unread_only", lambda: list_by_read_status(False)),
-		Option("f", "finished", mark_as_finished),
-		Option("d", "delete", lambda: None)
+        Option("a", "with-author", list_books_with_author, True),
+        Option("n", "new", add_new_book),
+        Option("r", "read-only", lambda: list_by_read_status(True)),
+        Option("u", "unread_only", lambda: list_by_read_status(False)),
+        Option("f", "finished", mark_as_finished, True),
+        Option("d", "delete", delete_book, True)
     ]
 
 def main():
