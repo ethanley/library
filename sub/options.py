@@ -4,17 +4,24 @@ class TooManyArgsError(Exception):
     pass
 
 class Option:
-    def __init__(self, short, long, action, has_parameter=False):
+    def __init__(self, short, long, action, help_message, parameter=None):
         self.short = short
         self.long = long
         self.action = action
-        self.has_parameter = has_parameter
+        self.help_message = help_message
+        self.parameter = parameter
+
+    def has_parameter(self):
+        return self.parameter != None
     
     def short_formatted(self):
-        return f"{self.short}:" if self.has_parameter else self.short
+        return f"{self.short}:" if self.has_parameter() else self.short
 
     def long_formatted(self):
-        return f"{self.long}=" if self.has_parameter else self.long
+        return f"{self.long}=" if self.has_parameter() else self.long
+
+    def to_string(self):
+        return "\t%s  %s %s\n\t\t%s" % (f"-{self.short}", f"--{self.long}", f"[{self.parameter.upper()}]" if self.has_parameter() else "", self.help_message)
 
 class Options:
     def __init__(self, options):

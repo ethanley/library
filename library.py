@@ -3,8 +3,17 @@ from sub.options import Option, Options
 from sub.database import Database
 from sub.book import Book
 
+ALL_POSSIBLE_OPTIONS = None
+
+HELP_MESSAGE = lambda: """
+Usage: library [OPTIONS...]
+
+Catalogue books and record the number of times they've been read
+
+""" + '\n'.join([option.to_string() for option in ALL_POSSIBLE_OPTIONS])
+
 def show_help():
-    print("Help!")
+    print(HELP_MESSAGE())
 
 def show_version():
     print("library.py version 0.1")
@@ -54,21 +63,21 @@ def delete_book(title):
     Database.delete_book(book)
 
 ALL_POSSIBLE_OPTIONS = [
-        Option("h", "help", show_help),
-        Option("v", "version", show_version),
-        Option("l", "list", list_all_books),
-        Option("a", "with-author", list_books_with_author, True),
-        Option("n", "new", add_new_book),
-        Option("r", "read-only", lambda: list_by_read_status(True)),
-        Option("u", "unread_only", lambda: list_by_read_status(False)),
-        Option("f", "finished", mark_as_finished, True),
-        Option("d", "delete", delete_book, True)
+        Option("h", "help", show_help, "Display this help message"),
+        Option("v", "version", show_version, "Show program version"),
+        Option("l", "list", list_all_books, "List all books"),
+        Option("a", "with-author", list_books_with_author, "List all books with author", "AUTHOR"),
+        Option("n", "new", add_new_book, "Add a new book"),
+        Option("r", "read-only", lambda: list_by_read_status(True), "List all read books"),
+        Option("u", "unread_only", lambda: list_by_read_status(False), "List all unread books"),
+        Option("f", "finished", mark_as_finished, "Mark a book as read", "TITLE"),
+        Option("d", "delete", delete_book, "Delete a book", "TITLE")
     ]
 
 def main():
     chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)
 
-    if (chosen_option.has_parameter):
+    if (chosen_option.has_parameter()):
         chosen_option.action(parameter)
     else:
         chosen_option.action()

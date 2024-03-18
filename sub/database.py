@@ -6,8 +6,7 @@ class Database:
 
     @classmethod
     def filepath(cls):
-        # TODO make absolute
-        return cls.__FILE_NAME
+        return os.path.abspath(cls.__FILE_NAME)
 
     @classmethod
     def is_initialised(cls):
