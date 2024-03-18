@@ -9,36 +9,60 @@ def show_help():
 def show_version():
     print("library.py version 0.1")
 
+def print_books(books):
+	formatted_titles = '\n'.join([book.title for book in books])
+	print(formatted_titles)
+
 def list_all_books():
     books = Database.get_all_books()
-    print(books)
+    print_books(books)
 
 def list_books_with_author(author):
-	books = Book.filter_by_author(Database.get_all_books(), author)
-	print(books)
+	all_books = Database.get_all_books()
+	books_by_author = Book.filter_by_author(all_books, author)
+	print_books(books_by_author)
+
+def list_by_read_status(has_been_read):
+	all_books = Database.get_all_books()
+	filtered_books = Book.filter_by_read(all_books, has_been_read)
+	print_books(filtered_books)
 
 def add_new_book():
-	raise NotImplementedError()
+	title = input("Title:\t")
+	author = input("Author:\t")
+	times_read = int(input("Times Read:\t"))
+
+	book = Book(title, author, times_read)
+	Database.add_book(book)
+
+def mark_as_finished(title):
+    all_books = Database.get_all_books()
+    book = Book.get_book_with_title(all_books, title)
+    if (book == None):
+        print(f"No book found matching title: `{title}`")
+        return
+    book.mark_as_read()
+    Database.update_book(book)
+
+def delete_book(title):
+    all_books = Database.get_all_books()
+    book = Book.get_book_with_title(all_books, title)
+    if (book == None):
+        print(f"No book found matching title: `{title}`")
+        return
+    Database.delete_book(book)
 
 ALL_POSSIBLE_OPTIONS = [
         Option("h", "help", show_help),
         Option("v", "version", show_version),
         Option("l", "list", list_all_books),
 		Option("a", "with-author", list_books_with_author, True),
-		Option("n", "new", add_new_book)
+		Option("n", "new", add_new_book),
+		Option("r", "read-only", lambda: list_by_read_status(True)),
+		Option("u", "unread_only", lambda: list_by_read_status(False)),
+		Option("f", "finished", mark_as_finished),
+		Option("d", "delete", lambda: None)
     ]
-
-# SHORT_OPTIONS = "hvla:runf:"
-# LONG_OPTIONS = [
-#         "help",
-#         "version",
-#         "list-all",
-#         "author=",
-#         "read-only",
-#         "unread-only",
-#         "new",
-#         "finished="
-#     ]
 
 def main():
     chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)

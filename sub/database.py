@@ -14,8 +14,14 @@ class Database:
         return os.path.isfile(cls.__FILE_NAME)
 
     @classmethod
-    def initialise(cls):
-        open(cls.__FILE_NAME, "x")
+    def initialise(cls, books = []):
+        if (len(books) == 0):
+            open(cls.__FILE_NAME, "x")
+        else:
+            with open(cls.__FILE_NAME, "w") as file:
+                for book in books:
+                    table_row = book.map_to_table_row()
+                    file.write(table_row)
 
     @classmethod
     def get_all_books(cls):
@@ -26,8 +32,30 @@ class Database:
             data = file.read()
 
         rows = data.split('\n')
-        table = [row.split(',') for row in rows if row != '']
-
-        books = [Book(*row) for row in table]
+        books = [Book.map_table_row_to_book(row) for row in rows if row != '']
 
         return books
+
+    @classmethod
+    def add_book(cls, book):
+        table_row = book.map_to_table_row()
+
+        if (not cls.is_initialised()):
+            cls.initialise()
+
+        with open(cls.__FILE_NAME, "a") as file:
+            file.write(table_row)
+
+    @classmethod
+    def update_book(cls, updated_book):
+        old_books = cls.get_all_books()
+        new_books = [updated_book if updated_book.title == old_book.title else old_book for old_book in old_books]
+
+        cls.initialise(new_books)
+
+    @classmethod
+    def delete_book(cls, book):
+        old_books = cls.get_all_books()
+        new_books = list(filter(lambda b: b.title != book.title, old_books))
+
+        cls.initialise(new_books)
