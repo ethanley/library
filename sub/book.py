@@ -7,6 +7,9 @@ class Book:
     def mark_as_read(self):
         self.times_read += 1
 
+    def to_string(self):
+        return "%s\n |-by %s\n |- read %s time(s)" % (self.title, self.author, self.times_read)
+
     def map_to_table_row(self):
         return "%s,%s,%s" % (self.title, self.author, self.times_read)
 

@@ -40,6 +40,14 @@ def list_by_read_status(has_been_read):
     filtered_books = Book.filter_by_read(all_books, has_been_read)
     print_books(filtered_books)
 
+def print_book(title):
+    all_books = Database.get_all_books()
+    book = Book.get_book_with_title(all_books, title)
+    if (book == None):
+        print(f"No book found matching title: `{title}`")
+        return
+    print(book.to_string())
+
 def add_new_book():
     title = input("Title:\t\t")
     author = input("Author:\t\t")
@@ -71,6 +79,7 @@ ALL_POSSIBLE_OPTIONS = [
         Option("v", "version", show_version, "Show program version"),
         Option("l", "list", list_all_books, "List all books"),
         Option("a", "with-author", list_books_with_author, "List all books with author", "AUTHOR"),
+        Option("i", "info", print_book, "Display information about a book", "TITLE"),
         Option("n", "new", add_new_book, "Add a new book"),
         Option("r", "read-only", lambda: list_by_read_status(True), "List all read books"),
         Option("u", "unread_only", lambda: list_by_read_status(False), "List all unread books"),
@@ -83,8 +92,8 @@ def main():
         chosen_option, parameter = Options(ALL_POSSIBLE_OPTIONS).get_option(argv)
     except IncorrectUsageError:
         show_incorrect_usage()
-    except:
-        print("Something went wrong. Aborting.")
+    except Exception as err:
+        print(err)
     else:
         if (chosen_option.has_parameter()):
             chosen_option.action(parameter)

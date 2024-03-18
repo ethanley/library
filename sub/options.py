@@ -33,16 +33,23 @@ class Options:
         for option in self.__options:
             if (arg == f"-{option.short}" or arg == f"--{option.long}"):
                 return option
-        # TODO error handling
+        # TODO error handling for when no option found
 
     def get_option(self, argv):
-        args, rest = getopt.getopt(
-            argv[1:],
-            self.__shorts,
-            self.__longs
-        )
+        try:
+            args, rest = getopt.getopt(
+                argv[1:],
+                self.__shorts,
+                self.__longs
+            )
+        except getopt.error as err:
+            raise IncorrectUsageError
 
         if (len(args) != 1):
             raise IncorrectUsageError()
+
+        chosen_option = self.__find_option(args[0][0])
+        if (chosen_option.has_parameter() and len(args[0]) == 1):
+            raise IncorrectUsageError()
         
-        return self.__find_option(args[0][0]), args[0][1]
+        return chosen_option, args[0][1]
